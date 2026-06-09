@@ -1,0 +1,56 @@
+.task-board-header {
+  margin-bottom: 1.5rem;
+}
+
+.back-link {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.task-board-header h1 {
+  margin: 0.5rem 0 0;
+}
+
+.kanban {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.kanban-column {
+  background: #eef2ff;
+  border-radius: 8px;
+  padding: 1rem;
+  min-height: 300px;
+}
+
+.kanban-column h3 {
+  margin: 0 0 1rem;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  color: #6b7280;
+}
+
+.kanban-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.task-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 0.75rem;
+  color: inherit;
+  transition: box-shadow 0.15s;
+}
+
+.task-card:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.task-card-title {
+  font-size: 0.875rem;
+  font-weight: 500;
+}

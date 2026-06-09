@@ -1,0 +1,33 @@
+import { Navigate, Route, Routes } from 'react-router-dom'
+import { useAuth } from './context/AuthContext'
+import LoginPage from './pages/LoginPage'
+import ProjectsPage from './pages/ProjectsPage'
+import TaskBoardPage from './pages/TaskBoardPage'
+import TaskDetailPage from './pages/TaskDetailPage'
+import Layout from './components/Layout'
+
+function ProtectedRoute({ children }: { children: React.ReactNode }) {
+  const { isAuthenticated } = useAuth()
+  if (!isAuthenticated) return <Navigate to="/login" replace />
+  return <>{children}</>
+}
+
+export default function App() {
+  return (
+    <Routes>
+      <Route path="/login" element={<LoginPage />} />
+      <Route
+        path="/"
+        element={
+          <ProtectedRoute>
+            <Layout />
+          </ProtectedRoute>
+        }
+      >
+        <Route index element={<ProjectsPage />} />
+        <Route path="projects/:projectId" element={<TaskBoardPage />} />
+        <Route path="tasks/:taskId" element={<TaskDetailPage />} />
+      </Route>
+    </Routes>
+  )
+}
