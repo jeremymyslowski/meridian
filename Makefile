@@ -1,4 +1,4 @@
-.PHONY: dev down test seed migrate api-test web-test worker-test fixture-test scenario lint
+.PHONY: dev down test seed migrate api-test web-test worker-test fixture-test scenario lint ci codegen-check
 
 dev:
 	docker compose up --build -d
@@ -43,6 +43,11 @@ scenario:
 lint:
 	cd apps/api && python3 -m ruff check .
 	cd apps/web && npm run lint
+
+codegen-check:
+	python3 scripts/check-codegen.py
+
+ci: codegen-check lint api-test web-test worker-test
 
 setup-local:
 	cp -n .env.example .env 2>/dev/null || true

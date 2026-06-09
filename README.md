@@ -17,7 +17,7 @@ meridian/
 │   ├── ui-kit/       → Shared React components (Button, DataTable, Modal, …)
 │   └── config/       → Feature flags and shared config
 ├── db/
-│   ├── migrations/   → PostgreSQL schema (001–005)
+│   ├── migrations/   → PostgreSQL schema (001–007)
 │   └── seeds/        → Seed data directory
 ├── docs/
 │   ├── architecture/ → System design docs
@@ -70,18 +70,28 @@ To reset everything (including DB): `docker compose down -v && make dev && make 
 ## Running Tests
 
 ```bash
-# API tests (requires running Postgres)
-make api-test
+# Full CI mirror (Postgres on localhost:5432, npm deps installed)
+make ci
 
-# Web tests
-cd apps/web && npm install && npm test -- --run
-
-# Worker tests
+# Individual suites
+make api-test          # requires Postgres + migrations
+make web-test
 make worker-test
+make codegen-check     # OpenAPI ↔ @meridian/api-client contract
 
 # QA fixture tests (some failures expected until agents fix them)
 make fixture-test
 ```
+
+## CI & GitHub
+
+GitHub Actions runs on every PR:
+
+- **CI** — API (Python 3.11/3.12 + Postgres), web (Node 20), worker (Go 1.22), lint, contract check
+- **Codegen Check** — `docs/api/openapi.yaml` synced with `@meridian/api-client`
+- **Agent Scenario Smoke** — API smoke on `main`
+
+See [docs/github.md](docs/github.md) for publishing the repo and running agent evaluations.
 
 ## Conventions
 
@@ -107,4 +117,4 @@ make fixture-test
 - [x] **Phase 2** — RBAC, pagination, ui-kit, analytics, webhooks
 - [x] **Phase 3** — QA fixtures (naming traps, large files, broken tests)
 - [x] **Phase 4** — Agent scenario playbook (12 scenarios in `docs/agent-scenarios/`)
-- [ ] **Phase 5** — CI matrix, GitHub publish
+- [x] **Phase 5** — CI matrix, GitHub publish

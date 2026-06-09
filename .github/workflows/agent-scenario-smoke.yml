@@ -1,0 +1,58 @@
+name: Agent Scenario Smoke
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  production-smoke:
+    name: Production API smoke (main)
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: meridian
+          POSTGRES_PASSWORD: meridian
+          POSTGRES_DB: meridian
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U meridian -d meridian"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      DATABASE_URL: postgresql://meridian:meridian@localhost:5432/meridian
+      JWT_SECRET: smoke-test-secret
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Postgres client
+        run: sudo apt-get update && sudo apt-get install -y postgresql-client
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: apps/api/requirements.txt
+
+      - name: Install API dependencies
+        run: pip install -r apps/api/requirements.txt
+
+      - name: Run migrations
+        run: bash scripts/ci-migrate.sh
+
+      - name: API smoke tests
+        run: python -m pytest apps/api/tests/ -v --maxfail=1
+
+      - name: Scenario docs present
+        run: |
+          test -f docs/agent-scenarios/README.md
+          count="$(find docs/agent-scenarios -maxdepth 1 -name '*.md' ! -name 'README.md' | wc -l | tr -d ' ')"
+          test "$count" -ge 12
+          echo "Found $count agent scenario playbooks"

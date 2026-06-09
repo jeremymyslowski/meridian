@@ -165,6 +165,13 @@ export class MeridianClient {
     return this.request<Project[]>('/api/v1/projects');
   }
 
+  createProject(data: { team_id: string; name: string; description?: string }) {
+    return this.request<Project>('/api/v1/projects', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
   getProject(projectId: string) {
     return this.request<Project>(`/api/v1/projects/${projectId}`);
   }
