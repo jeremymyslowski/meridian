@@ -22,7 +22,7 @@ meridian/
 ├── docs/
 │   ├── architecture/ → System design docs
 │   ├── api/          → OpenAPI spec
-│   └── agent-scenarios/ → Agent QA playbooks (Phase 4)
+│   └── agent-scenarios/ → Agent QA playbooks (12 scenarios)
 ├── qa-fixtures/      → Isolated agent challenge zones (Phase 3)
 └── scripts/          → Bootstrap and seed helpers
 ```
@@ -106,5 +106,5 @@ make fixture-test
 - [x] **Phase 1** — Vertical slice (login → tasks → comments)
 - [x] **Phase 2** — RBAC, pagination, ui-kit, analytics, webhooks
 - [x] **Phase 3** — QA fixtures (naming traps, large files, broken tests)
-- [ ] **Phase 4** — Agent scenario playbook
+- [x] **Phase 4** — Agent scenario playbook (12 scenarios in `docs/agent-scenarios/`)
 - [ ] **Phase 5** — CI matrix, GitHub publish
