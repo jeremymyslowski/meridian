@@ -28,6 +28,8 @@ meridian/
 ```
 
 **Start here:**
+- QA methodology: [docs/qa-guide.md](docs/qa-guide.md)
+- Agent scenarios: [docs/agent-scenarios/README.md](docs/agent-scenarios/README.md)
 - Architecture overview: [docs/architecture/overview.md](docs/architecture/overview.md)
 - API contract: [docs/api/openapi.yaml](docs/api/openapi.yaml)
 - DB migrations: [db/migrations/README.md](db/migrations/README.md)
