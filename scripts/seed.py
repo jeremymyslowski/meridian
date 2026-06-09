@@ -36,7 +36,7 @@ def main() -> None:
     password_hash = hash_password(PASSWORD)
 
     users = [
-        (str(uuid.uuid4()), f"user{i}@meridian.test", f"User {i}", password_hash, now, now)
+        (str(uuid.uuid4()), f"user{i}@example.com", f"User {i}", password_hash, now, now)
         for i in range(1, 11)
     ]
     execute_values(
@@ -153,7 +153,7 @@ def main() -> None:
     print(f"  Projects: {len(projects)}")
     print(f"  Tasks: {len(tasks)}")
     print(f"  Comments: {len(comments)}")
-    print("\nLogin as: user1@meridian.test / password123")
+    print("\nLogin as: user1@example.com / password123")
 
 
 if __name__ == "__main__":

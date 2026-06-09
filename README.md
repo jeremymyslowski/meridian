@@ -34,17 +34,19 @@ meridian/
 
 ## Quick Start
 
-```bash
-# Copy env and start all services
-cp .env.example .env
-make dev
+Requires **Docker Desktop** running.
 
-# In another terminal, seed the database
-pip install bcrypt psycopg2-binary   # if not already installed
-make seed
+```bash
+cp .env.example .env
+make dev          # builds images and starts all services in background
+make seed         # loads demo data (run once after first boot)
 ```
 
-Open http://localhost:5173 and log in with `user1@meridian.test` / `password123`.
+Open http://localhost:5173 and log in with `user1@example.com` / `password123`.
+
+To watch logs: `docker compose logs -f`
+
+To reset everything (including DB): `docker compose down -v && make dev && make seed`
 
 ## Services
 

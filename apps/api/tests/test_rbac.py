@@ -4,7 +4,7 @@ from meridian_api.database import get_connection
 
 
 def _create_viewer_on_team(team_id: str) -> dict:
-    viewer_email = f"viewer-{uuid.uuid4().hex[:6]}@meridian.test"
+    viewer_email = f"viewer-{uuid.uuid4().hex[:6]}@example.com"
     return {"email": viewer_email}
 
 
@@ -12,7 +12,7 @@ def test_viewer_cannot_create_task(client, seeded_team_and_project):
     team_id = seeded_team_and_project["team_id"]
     project_id = seeded_team_and_project["project_id"]
 
-    viewer_email = f"viewer-{uuid.uuid4().hex[:6]}@meridian.test"
+    viewer_email = f"viewer-{uuid.uuid4().hex[:6]}@example.com"
     register = client.post(
         "/api/v1/auth/register",
         json={"email": viewer_email, "name": "Viewer", "password": "password123"},
@@ -50,7 +50,7 @@ def test_viewer_can_list_tasks(client, seeded_team_and_project):
         json={"title": "Visible to viewer"},
     )
 
-    viewer_email = f"viewer-read-{uuid.uuid4().hex[:6]}@meridian.test"
+    viewer_email = f"viewer-read-{uuid.uuid4().hex[:6]}@example.com"
     viewer = client.post(
         "/api/v1/auth/register",
         json={"email": viewer_email, "name": "Viewer Read", "password": "password123"},

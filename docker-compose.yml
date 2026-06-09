@@ -34,7 +34,7 @@ services:
     ports:
       - "8000:8000"
     environment:
-      DATABASE_URL: postgresql://meridian:meridian@postgres:5432/meridian
+      DATABASE_URL: postgresql://meridian:meridian@postgres:5432/meridian?sslmode=disable
       JWT_SECRET: dev-secret-change-in-production
       JWT_EXPIRE_MINUTES: 60
       REDIS_URL: redis://redis:6379
@@ -48,13 +48,14 @@ services:
       - ./apps/api:/app
       - ./docs/api:/docs/api
       - ./packages/config:/packages/config:ro
+      - ./scripts:/scripts:ro
 
   worker:
     build:
       context: ./apps/worker
       dockerfile: Dockerfile
     environment:
-      DATABASE_URL: postgresql://meridian:meridian@postgres:5432/meridian
+      DATABASE_URL: postgresql://meridian:meridian@postgres:5432/meridian?sslmode=disable
       WORKER_POLL_INTERVAL_SECONDS: 5
     depends_on:
       postgres:
@@ -76,7 +77,8 @@ services:
       - ./apps/web:/app
       - ./packages/api-client:/packages/api-client
       - ./packages/ui-kit:/packages/ui-kit
-      - /app/node_modules
+      - web_node_modules:/app/node_modules
 
 volumes:
   postgres_data:
+  web_node_modules:

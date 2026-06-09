@@ -37,15 +37,15 @@ func main() {
 
 	db, err := sql.Open("postgres", dbURL)
 	if err != nil {
-		logFatal("worker_startup", "failed to connect to database", map[string]string{"error": err.Error()})
+		logFatal("worker_startup", "failed to connect to database", map[string]any{"error": err.Error()})
 	}
 	defer db.Close()
 
 	if err := db.Ping(); err != nil {
-		logFatal("worker_startup", "database ping failed", map[string]string{"error": err.Error()})
+		logFatal("worker_startup", "database ping failed", map[string]any{"error": err.Error()})
 	}
 
-	logInfo("worker_started", "Meridian worker started", map[string]interface{}{
+	logInfo("worker_started", "Meridian worker started", map[string]any{
 		"poll_interval_seconds": intervalSec,
 	})
 
@@ -71,13 +71,13 @@ func processAssignmentEvents(db *sql.DB) error {
 
 	for _, event := range events {
 		if err := handleAssignment(db, event); err != nil {
-			logError("assignment_event", err.Error(), map[string]string{"event_id": event.ID})
+			logError("assignment_event", err.Error(), map[string]any{"event_id": event.ID})
 			continue
 		}
 		if err := markAssignmentProcessed(db, event.ID); err != nil {
 			return err
 		}
-		logInfo("assignment_processed", "processed assignment event", map[string]string{
+		logInfo("assignment_processed", "processed assignment event", map[string]any{
 			"event_id": event.ID,
 			"task_id":  event.TaskID,
 		})
@@ -111,7 +111,7 @@ func fetchUnprocessedAssignmentEvents(db *sql.DB) ([]AssignmentEvent, error) {
 
 func handleAssignment(db *sql.DB, event AssignmentEvent) error {
 	if isViewerOnTaskTeam(db, event.AssigneeID, event.TaskID) {
-		logInfo("assignment_skipped", "skipping notification for viewer role", map[string]string{
+		logInfo("assignment_skipped", "skipping notification for viewer role", map[string]any{
 			"assignee_id": event.AssigneeID,
 			"task_id":     event.TaskID,
 		})
@@ -170,7 +170,7 @@ func processWebhookEvents(db *sql.DB) error {
 		if err := markWebhookProcessed(db, event.ID); err != nil {
 			return err
 		}
-		logInfo("webhook_dispatched", "webhook event delivered", map[string]string{
+		logInfo("webhook_dispatched", "webhook event delivered", map[string]any{
 			"event_id":   event.ID,
 			"event_type": event.EventType,
 			"url":        event.WebhookURL,
@@ -233,9 +233,9 @@ func recordWebhookFailure(db *sql.DB, event WebhookEvent, err error) {
 		WHERE id = $2
 	`, err.Error(), event.ID)
 	if dbErr != nil {
-		logError("webhook_failure_record", dbErr.Error(), map[string]string{"event_id": event.ID})
+		logError("webhook_failure_record", dbErr.Error(), map[string]any{"event_id": event.ID})
 	}
-	logError("webhook_dispatch", err.Error(), map[string]string{
+	logError("webhook_dispatch", err.Error(), map[string]any{
 		"event_id": event.ID,
 		"url":      event.WebhookURL,
 	})
@@ -246,20 +246,20 @@ func markWebhookProcessed(db *sql.DB, eventID string) error {
 	return err
 }
 
-func logInfo(event, message string, fields map[string]interface{}) {
+func logInfo(event, message string, fields map[string]any) {
 	logStructured("INFO", event, message, fields)
 }
 
-func logError(event, message string, fields map[string]interface{}) {
+func logError(event, message string, fields map[string]any) {
 	logStructured("ERROR", event, message, fields)
 }
 
-func logFatal(event, message string, fields map[string]interface{}) {
+func logFatal(event, message string, fields map[string]any) {
 	logStructured("FATAL", event, message, fields)
 	os.Exit(1)
 }
 
-func logStructured(level, event, message string, fields map[string]interface{}) {
+func logStructured(level, event, message string, fields map[string]any) {
 	entry := map[string]interface{}{
 		"timestamp": time.Now().UTC().Format(time.RFC3339),
 		"level":     level,

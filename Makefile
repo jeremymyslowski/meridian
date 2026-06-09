@@ -1,7 +1,14 @@
 .PHONY: dev down test seed migrate api-test web-test worker-test lint
 
 dev:
-	docker compose up --build
+	docker compose up --build -d
+	@echo ""
+	@echo "Meridian is starting:"
+	@echo "  Web:  http://localhost:5173"
+	@echo "  API:  http://localhost:8000/docs"
+	@echo ""
+	@echo "First time? Run 'make seed' after services are up."
+	@echo "Stop with: make down"
 
 down:
 	docker compose down
@@ -13,8 +20,7 @@ migrate:
 	done
 
 seed:
-	pip3 install -q -r scripts/requirements.txt 2>/dev/null || true
-	python3 scripts/seed.py
+	docker compose exec -e DATABASE_URL=postgresql://meridian:meridian@postgres:5432/meridian?sslmode=disable -T api python /scripts/seed.py
 
 test: api-test web-test worker-test
 

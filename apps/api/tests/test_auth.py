@@ -1,5 +1,5 @@
 def test_register_and_login(client):
-    email = "newuser@meridian.test"
+    email = "newuser@example.com"
     register = client.post(
         "/api/v1/auth/register",
         json={"email": email, "name": "New User", "password": "password123"},
@@ -18,7 +18,7 @@ def test_register_and_login(client):
 def test_login_invalid_credentials(client):
     response = client.post(
         "/api/v1/auth/login",
-        json={"email": "nobody@meridian.test", "password": "wrong"},
+        json={"email": "nobody@example.com", "password": "wrong"},
     )
     assert response.status_code == 401
     assert response.json()["detail"]["error"]["code"] == "INVALID_CREDENTIALS"

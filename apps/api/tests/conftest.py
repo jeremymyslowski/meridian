@@ -19,7 +19,7 @@ def client():
 
 @pytest.fixture
 def test_user(client):
-    email = f"test-{uuid.uuid4().hex[:8]}@meridian.test"
+    email = f"test-{uuid.uuid4().hex[:8]}@example.com"
     response = client.post(
         "/api/v1/auth/register",
         json={"email": email, "name": "Test User", "password": "password123"},
