@@ -1,4 +1,4 @@
-.PHONY: dev down test seed migrate api-test web-test worker-test fixture-test lint
+.PHONY: dev down test seed migrate api-test web-test worker-test fixture-test scenario lint
 
 dev:
 	docker compose up --build -d
@@ -35,6 +35,10 @@ worker-test:
 
 fixture-test:
 	bash scripts/run-fixture-tests.sh
+
+scenario:
+	@test -n "$(NUM)" || (echo "Usage: make scenario NUM=01" && exit 1)
+	bash scripts/checkout-scenario.sh $(NUM)
 
 lint:
 	cd apps/api && python3 -m ruff check .

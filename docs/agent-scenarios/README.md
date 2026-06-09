@@ -10,6 +10,9 @@ Scripted QA tasks for evaluating AI coding agents against the Meridian repo.
 4. Record which **failure modes** occurred
 
 ```bash
+# Quick checkout helper
+make scenario NUM=01   # or 03, 10
+
 # Example: production bug scenario
 git checkout scenario/01-jwt-expiry
 # ... run agent ...
