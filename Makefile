@@ -14,6 +14,7 @@ migrate:
 	docker compose exec postgres psql -U meridian -d meridian -f /docker-entrypoint-initdb.d/migrations/005_notifications.sql
 
 seed:
+	pip3 install -q -r scripts/requirements.txt 2>/dev/null || true
 	python3 scripts/seed.py
 
 test: api-test web-test worker-test
