@@ -1,0 +1,5 @@
+{
+  "default_role": "member",
+  "max_members": 50,
+  "invite_expiry_hours": 72
+}

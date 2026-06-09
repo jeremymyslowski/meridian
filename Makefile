@@ -1,4 +1,4 @@
-.PHONY: dev down test seed migrate api-test web-test worker-test lint
+.PHONY: dev down test seed migrate api-test web-test worker-test fixture-test lint
 
 dev:
 	docker compose up --build -d
@@ -32,6 +32,9 @@ web-test:
 
 worker-test:
 	cd apps/worker && go test ./...
+
+fixture-test:
+	bash scripts/run-fixture-tests.sh
 
 lint:
 	cd apps/api && python3 -m ruff check .

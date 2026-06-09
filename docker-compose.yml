@@ -49,6 +49,7 @@ services:
       - ./docs/api:/docs/api
       - ./packages/config:/packages/config:ro
       - ./scripts:/scripts:ro
+      - ./qa-fixtures:/qa-fixtures:ro
 
   worker:
     build:

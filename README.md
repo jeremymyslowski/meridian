@@ -78,6 +78,9 @@ cd apps/web && npm install && npm test -- --run
 
 # Worker tests
 make worker-test
+
+# QA fixture tests (some failures expected until agents fix them)
+make fixture-test
 ```
 
 ## Conventions
@@ -102,6 +105,6 @@ make worker-test
 
 - [x] **Phase 1** — Vertical slice (login → tasks → comments)
 - [x] **Phase 2** — RBAC, pagination, ui-kit, analytics, webhooks
-- [ ] **Phase 3** — QA fixtures (naming traps, large files, broken tests)
+- [x] **Phase 3** — QA fixtures (naming traps, large files, broken tests)
 - [ ] **Phase 4** — Agent scenario playbook
 - [ ] **Phase 5** — CI matrix, GitHub publish
