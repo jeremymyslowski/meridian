@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: Meridian API
-  version: 0.1.0
+  version: 0.2.0
   description: Team collaboration platform API
 
 servers:
@@ -70,6 +70,43 @@ paths:
     post:
       summary: Create comment
       tags: [comments]
+      security: [{ bearerAuth: [] }]
+
+  /api/v1/analytics/overview:
+    get:
+      summary: Analytics overview
+      tags: [analytics]
+      security: [{ bearerAuth: [] }]
+
+  /api/v1/feature-flags:
+    get:
+      summary: Feature flags
+      tags: [config]
+
+  /api/v1/me/teams:
+    get:
+      summary: List my team memberships
+      tags: [teams]
+      security: [{ bearerAuth: [] }]
+
+  /api/v1/webhooks:
+    get:
+      summary: List webhooks
+      tags: [webhooks]
+      security: [{ bearerAuth: [] }]
+    post:
+      summary: Create webhook
+      tags: [webhooks]
+      security: [{ bearerAuth: [] }]
+
+  /api/v1/tasks/{task_id}/attachments:
+    get:
+      summary: List attachments
+      tags: [attachments]
+      security: [{ bearerAuth: [] }]
+    post:
+      summary: Create attachment (S3 stub)
+      tags: [attachments]
       security: [{ bearerAuth: [] }]
 
 components:

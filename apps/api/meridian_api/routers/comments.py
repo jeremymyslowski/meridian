@@ -6,24 +6,10 @@ from psycopg2.extensions import connection
 
 from meridian_api.auth import get_current_user
 from meridian_api.database import get_db
-from meridian_api.errors import APIError
+from meridian_api.policies import require_task_access
 from meridian_api.schemas import CommentCreate, CommentResponse
 
 router = APIRouter(tags=["comments"])
-
-
-def _user_can_access_task(db: connection, task_id: UUID, user_id: UUID) -> bool:
-    with db.cursor() as cur:
-        cur.execute(
-            """
-            SELECT 1 FROM tasks t
-            JOIN projects p ON p.id = t.project_id
-            JOIN team_members tm ON tm.team_id = p.team_id
-            WHERE t.id = %s AND tm.user_id = %s
-            """,
-            (str(task_id), str(user_id)),
-        )
-        return cur.fetchone() is not None
 
 
 @router.get("/tasks/{task_id}/comments", response_model=list[CommentResponse])
@@ -32,8 +18,7 @@ def list_comments(
     db: Annotated[connection, Depends(get_db)],
     current_user: Annotated[dict, Depends(get_current_user)],
 ):
-    if not _user_can_access_task(db, task_id, current_user["id"]):
-        raise APIError("NOT_FOUND", "Task not found", 404)
+    require_task_access(db, current_user["id"], task_id, "viewer")
 
     with db.cursor() as cur:
         cur.execute(
@@ -58,8 +43,7 @@ def create_comment(
     db: Annotated[connection, Depends(get_db)],
     current_user: Annotated[dict, Depends(get_current_user)],
 ):
-    if not _user_can_access_task(db, task_id, current_user["id"]):
-        raise APIError("NOT_FOUND", "Task not found", 404)
+    require_task_access(db, current_user["id"], task_id, "member")
 
     comment_id = uuid4()
     with db.cursor() as cur:

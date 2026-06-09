@@ -5,6 +5,7 @@ import { BrowserRouter } from 'react-router-dom'
 import App from './App'
 import { AuthProvider } from './context/AuthContext'
 import './index.css'
+import '@meridian/ui-kit/styles.css'
 
 const queryClient = new QueryClient()
 

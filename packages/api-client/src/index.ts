@@ -39,6 +39,53 @@ export interface Comment {
   updated_at: string;
 }
 
+export interface PaginatedMeta {
+  page: number;
+  page_size: number;
+  total: number;
+  total_pages: number;
+}
+
+export interface PaginatedTasks {
+  items: Task[];
+  meta: PaginatedMeta;
+}
+
+export interface TeamMembership {
+  team_id: string;
+  team_name: string;
+  team_slug: string;
+  role: 'owner' | 'member' | 'viewer';
+}
+
+export interface Attachment {
+  id: string;
+  task_id: string;
+  filename: string;
+  content_type: string;
+  size_bytes: number;
+  s3_url: string;
+  uploaded_by: string;
+  created_at: string;
+}
+
+export interface AnalyticsOverview {
+  total_projects: number;
+  total_tasks: number;
+  tasks_by_status: Record<string, number>;
+  total_comments: number;
+  total_teams: number;
+}
+
+export interface Webhook {
+  id: string;
+  team_id: string;
+  url: string;
+  events: string[];
+  active: boolean;
+  created_at: string;
+}
+
 export interface TokenResponse {
   access_token: string;
   token_type: string;
@@ -51,6 +98,12 @@ export interface APIError {
     message: string;
     details: Record<string, unknown>;
   };
+}
+
+export interface ListTasksParams {
+  page?: number;
+  page_size?: number;
+  status?: Task['status'];
 }
 
 export class MeridianClient {
@@ -100,6 +153,14 @@ export class MeridianClient {
     });
   }
 
+  listMyTeams() {
+    return this.request<TeamMembership[]>('/api/v1/me/teams');
+  }
+
+  getFeatureFlags() {
+    return this.request<{ flags: Record<string, boolean> }>('/api/v1/feature-flags');
+  }
+
   listProjects() {
     return this.request<Project[]>('/api/v1/projects');
   }
@@ -108,8 +169,15 @@ export class MeridianClient {
     return this.request<Project>(`/api/v1/projects/${projectId}`);
   }
 
-  listTasks(projectId: string) {
-    return this.request<Task[]>(`/api/v1/projects/${projectId}/tasks`);
+  listTasks(projectId: string, params: ListTasksParams = {}) {
+    const query = new URLSearchParams();
+    if (params.page) query.set('page', String(params.page));
+    if (params.page_size) query.set('page_size', String(params.page_size));
+    if (params.status) query.set('status', params.status);
+    const qs = query.toString();
+    return this.request<PaginatedTasks>(
+      `/api/v1/projects/${projectId}/tasks${qs ? `?${qs}` : ''}`,
+    );
   }
 
   getTask(taskId: string) {
@@ -138,6 +206,32 @@ export class MeridianClient {
     return this.request<Comment>(`/api/v1/tasks/${taskId}/comments`, {
       method: 'POST',
       body: JSON.stringify({ body }),
+    });
+  }
+
+  listAttachments(taskId: string) {
+    return this.request<Attachment[]>(`/api/v1/tasks/${taskId}/attachments`);
+  }
+
+  createAttachment(taskId: string, data: { filename: string; content_type: string; size_bytes: number }) {
+    return this.request<Attachment>(`/api/v1/tasks/${taskId}/attachments`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  getAnalyticsOverview() {
+    return this.request<AnalyticsOverview>('/api/v1/analytics/overview');
+  }
+
+  listWebhooks() {
+    return this.request<Webhook[]>('/api/v1/webhooks');
+  }
+
+  createWebhook(data: { team_id: string; url: string; events?: string[] }) {
+    return this.request<Webhook>('/api/v1/webhooks', {
+      method: 'POST',
+      body: JSON.stringify(data),
     });
   }
 }

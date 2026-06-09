@@ -11,9 +11,25 @@
   border-bottom: 1px solid #e5e7eb;
 }
 
+.layout-nav {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
 .layout-brand {
   font-size: 1.25rem;
   font-weight: 700;
+  color: #4f46e5;
+}
+
+.layout-nav-link {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #6b7280;
+}
+
+.layout-nav-link:hover {
   color: #4f46e5;
 }
 

@@ -7,11 +7,10 @@ down:
 	docker compose down
 
 migrate:
-	docker compose exec postgres psql -U meridian -d meridian -f /docker-entrypoint-initdb.d/migrations/001_users_teams.sql
-	docker compose exec postgres psql -U meridian -d meridian -f /docker-entrypoint-initdb.d/migrations/002_projects.sql
-	docker compose exec postgres psql -U meridian -d meridian -f /docker-entrypoint-initdb.d/migrations/003_tasks.sql
-	docker compose exec postgres psql -U meridian -d meridian -f /docker-entrypoint-initdb.d/migrations/004_comments.sql
-	docker compose exec postgres psql -U meridian -d meridian -f /docker-entrypoint-initdb.d/migrations/005_notifications.sql
+	@for f in db/migrations/*.sql; do \
+		echo "Running $$f..."; \
+		docker compose exec -T postgres psql -U meridian -d meridian -f /docker-entrypoint-initdb.d/migrations/$$(basename $$f) || true; \
+	done
 
 seed:
 	pip3 install -q -r scripts/requirements.txt 2>/dev/null || true

@@ -1,5 +1,6 @@
 import { FormEvent, useState } from 'react'
 import { Navigate } from 'react-router-dom'
+import { Button, Input } from '@meridian/ui-kit'
 import { useAuth } from '../context/AuthContext'
 import './LoginPage.css'
 
@@ -33,29 +34,25 @@ export default function LoginPage() {
 
         {error && <div className="login-error">{error}</div>}
 
-        <label>
-          Email
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </label>
+        <Input
+          label="Email"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
 
-        <label>
-          Password
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </label>
+        <Input
+          label="Password"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
 
-        <button type="submit" disabled={loading} className="btn-primary">
+        <Button type="submit" disabled={loading}>
           {loading ? 'Signing in...' : 'Sign in'}
-        </button>
+        </Button>
 
         <p className="login-hint">Demo: user1@meridian.test / password123</p>
       </form>

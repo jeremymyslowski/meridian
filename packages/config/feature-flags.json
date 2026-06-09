@@ -1,0 +1,7 @@
+{
+  "analytics_dashboard": true,
+  "file_attachments": true,
+  "webhook_integrations": true,
+  "task_pagination": true,
+  "dark_mode": false
+}

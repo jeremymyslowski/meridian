@@ -97,3 +97,66 @@ class CommentResponse(BaseModel):
 
 class CommentCreate(BaseModel):
     body: str = Field(min_length=1)
+
+
+class PaginatedMeta(BaseModel):
+    page: int
+    page_size: int
+    total: int
+    total_pages: int
+
+
+class PaginatedTasksResponse(BaseModel):
+    items: list[TaskResponse]
+    meta: PaginatedMeta
+
+
+class TeamMembershipResponse(BaseModel):
+    team_id: UUID
+    team_name: str
+    team_slug: str
+    role: Literal["owner", "member", "viewer"]
+
+
+class AttachmentResponse(BaseModel):
+    id: UUID
+    task_id: UUID
+    filename: str
+    content_type: str
+    size_bytes: int
+    s3_url: str
+    uploaded_by: UUID
+    created_at: datetime
+
+
+class AttachmentCreate(BaseModel):
+    filename: str = Field(min_length=1, max_length=500)
+    content_type: str = Field(min_length=1, max_length=255)
+    size_bytes: int = Field(ge=0)
+
+
+class AnalyticsOverview(BaseModel):
+    total_projects: int
+    total_tasks: int
+    tasks_by_status: dict[str, int]
+    total_comments: int
+    total_teams: int
+
+
+class WebhookCreate(BaseModel):
+    team_id: UUID
+    url: str = Field(min_length=1, max_length=2000)
+    events: list[str] = Field(default_factory=lambda: ["task.assigned", "task.completed"])
+
+
+class WebhookResponse(BaseModel):
+    id: UUID
+    team_id: UUID
+    url: str
+    events: list[str]
+    active: bool
+    created_at: datetime
+
+
+class FeatureFlagsResponse(BaseModel):
+    flags: dict[str, bool]

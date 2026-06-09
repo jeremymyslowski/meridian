@@ -14,8 +14,8 @@ meridian/
 ├── packages/
 │   ├── api-client/   → TypeScript API client
 │   ├── shared-types/ → Shared type definitions
-│   ├── ui-kit/       → Shared UI components (Phase 2)
-│   └── config/       → Shared tooling config (Phase 2)
+│   ├── ui-kit/       → Shared React components (Button, DataTable, Modal, …)
+│   └── config/       → Feature flags and shared config
 ├── db/
 │   ├── migrations/   → PostgreSQL schema (001–005)
 │   └── seeds/        → Seed data directory
@@ -85,10 +85,21 @@ make worker-test
 - Never edit old DB migrations — add new numbered files
 - OpenAPI spec is the API contract source of truth
 
+## Phase 2 Features
+
+- **RBAC** — owner / member / viewer roles enforced in API; UI hides edit controls for viewers
+- **Pagination** — paginated task list with status filtering (`/projects/:id/list`)
+- **Analytics** — dashboard at `/analytics` with task status breakdown
+- **Attachments** — S3-stub file metadata on tasks
+- **Webhooks** — outbound event queue processed by Go worker
+- **Feature flags** — `packages/config/feature-flags.json`
+- **Observability** — structured JSON logging + `X-Request-ID` in API and worker
+- **UI Kit** — `@meridian/ui-kit` with 11 shared components
+
 ## Phase Roadmap
 
 - [x] **Phase 1** — Vertical slice (login → tasks → comments)
-- [ ] **Phase 2** — RBAC, pagination, ui-kit, analytics, webhooks
+- [x] **Phase 2** — RBAC, pagination, ui-kit, analytics, webhooks
 - [ ] **Phase 3** — QA fixtures (naming traps, large files, broken tests)
 - [ ] **Phase 4** — Agent scenario playbook
 - [ ] **Phase 5** — CI matrix, GitHub publish

@@ -7,8 +7,20 @@
   color: #6b7280;
 }
 
-.task-board-header h1 {
-  margin: 0.5rem 0 0;
+.task-board-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.view-link {
+  font-size: 0.875rem;
+}
+
+.viewer-notice {
+  font-size: 0.8rem;
+  color: #9ca3af;
 }
 
 .kanban {

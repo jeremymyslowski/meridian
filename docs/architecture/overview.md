@@ -5,7 +5,17 @@ Meridian is a team collaboration platform built as a monorepo with four applicat
 - **web** — React SPA for project and task management
 - **api** — Python FastAPI REST API (source of truth for business logic)
 - **worker** — Go background processor for notifications and webhooks
-- **cli** — Python admin tooling (Phase 2)
+- **cli** — Python admin tooling (stub)
+
+## Phase 2 Additions
+
+- RBAC via `team_members.role` (owner > member > viewer)
+- Paginated task API with status filtering
+- Analytics aggregation endpoint
+- Attachment metadata (S3 stub URLs)
+- Webhook registration and outbound event dispatch
+- Feature flags from `packages/config/feature-flags.json`
+- Request ID middleware and structured logging
 
 ## Data Flow
 

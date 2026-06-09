@@ -38,6 +38,7 @@ services:
       JWT_SECRET: dev-secret-change-in-production
       JWT_EXPIRE_MINUTES: 60
       REDIS_URL: redis://redis:6379
+      FEATURE_FLAGS_PATH: /packages/config/feature-flags.json
     depends_on:
       postgres:
         condition: service_healthy
@@ -46,6 +47,7 @@ services:
     volumes:
       - ./apps/api:/app
       - ./docs/api:/docs/api
+      - ./packages/config:/packages/config:ro
 
   worker:
     build:
@@ -73,6 +75,7 @@ services:
     volumes:
       - ./apps/web:/app
       - ./packages/api-client:/packages/api-client
+      - ./packages/ui-kit:/packages/ui-kit
       - /app/node_modules
 
 volumes:

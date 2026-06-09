@@ -7,18 +7,10 @@ from psycopg2.extensions import connection
 from meridian_api.auth import get_current_user
 from meridian_api.database import get_db
 from meridian_api.errors import APIError
+from meridian_api.policies import require_project_access, require_team_role
 from meridian_api.schemas import ProjectCreate, ProjectResponse
 
 router = APIRouter(prefix="/projects", tags=["projects"])
-
-
-def _user_can_access_team(db: connection, user_id: UUID, team_id: UUID) -> bool:
-    with db.cursor() as cur:
-        cur.execute(
-            "SELECT 1 FROM team_members WHERE user_id = %s AND team_id = %s",
-            (str(user_id), str(team_id)),
-        )
-        return cur.fetchone() is not None
 
 
 @router.get("", response_model=list[ProjectResponse])
@@ -48,8 +40,7 @@ def create_project(
     db: Annotated[connection, Depends(get_db)],
     current_user: Annotated[dict, Depends(get_current_user)],
 ):
-    if not _user_can_access_team(db, current_user["id"], body.team_id):
-        raise APIError("FORBIDDEN", "You are not a member of this team", 403)
+    require_team_role(db, current_user["id"], body.team_id, "owner")
 
     project_id = uuid4()
     with db.cursor() as cur:
@@ -71,16 +62,15 @@ def get_project(
     db: Annotated[connection, Depends(get_db)],
     current_user: Annotated[dict, Depends(get_current_user)],
 ):
+    require_project_access(db, current_user["id"], project_id, "viewer")
+
     with db.cursor() as cur:
         cur.execute(
             """
-            SELECT p.id, p.team_id, p.name, p.description, p.status,
-                   p.created_by, p.created_at, p.updated_at
-            FROM projects p
-            JOIN team_members tm ON tm.team_id = p.team_id
-            WHERE p.id = %s AND tm.user_id = %s
+            SELECT id, team_id, name, description, status, created_by, created_at, updated_at
+            FROM projects WHERE id = %s
             """,
-            (str(project_id), str(current_user["id"])),
+            (str(project_id),),
         )
         row = cur.fetchone()
 
