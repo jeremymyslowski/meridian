@@ -1,0 +1,11 @@
+/**
+ * Client session configuration.
+ *
+ * BUG (scenario/01-jwt-expiry): TTL does not match API jwt_expire_minutes (60).
+ */
+
+/** Minutes before client treats session as expired. */
+export const TOKEN_TTL_MINUTES = 30
+
+/** Used by AuthContext for session expiry checks. */
+export const TOKEN_TTL_MS = TOKEN_TTL_MINUTES * 60 * 1000
