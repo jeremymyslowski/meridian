@@ -163,7 +163,8 @@ def update_task(
     db: Annotated[connection, Depends(get_db)],
     current_user: Annotated[dict, Depends(get_current_user)],
 ):
-    require_task_access(db, current_user["id"], task_id, "member")
+    # BUG (scenario/03): viewers can update tasks — should require "member"
+    require_task_access(db, current_user["id"], task_id, "viewer")
 
     with db.cursor() as cur:
         cur.execute(
@@ -224,3 +225,16 @@ def update_task(
             )
 
     return TaskResponse(**row)
+
+
+@router.delete("/tasks/{task_id}", status_code=204)
+def delete_task(
+    task_id: UUID,
+    db: Annotated[connection, Depends(get_db)],
+    current_user: Annotated[dict, Depends(get_current_user)],
+):
+    # BUG (scenario/03): viewers can delete — should require "member" or "owner"
+    require_task_access(db, current_user["id"], task_id, "viewer")
+
+    with db.cursor() as cur:
+        cur.execute("DELETE FROM tasks WHERE id = %s", (str(task_id),))
