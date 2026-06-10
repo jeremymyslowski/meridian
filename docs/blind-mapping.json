@@ -20,7 +20,7 @@
       "canonical": "main",
       "blind": "main",
       "prompt": "prompts/02.md",
-      "note": "Already implemented on main — use to test redundant work"
+      "note": "Already implemented on main \u2014 use to test redundant work"
     },
     "03": {
       "canonical": "scenario/03-viewer-role",
@@ -82,10 +82,10 @@
     }
   },
   "generate_commands": {
-    "full": "./scripts/generate-blind-repo.sh --output ../meridian-blind",
-    "scenario_01": "./scripts/generate-blind-repo.sh --output ../meridian-blind --branch scenario/01-jwt-expiry --blind-branch fix/session-timeout --scenario 01",
-    "scenario_03": "./scripts/generate-blind-repo.sh --output ../meridian-blind --branch scenario/03-viewer-role --blind-branch fix/viewer-permissions --scenario 03",
-    "scenario_10": "./scripts/generate-blind-repo.sh --output ../meridian-blind --branch scenario/10-cli-export --blind-branch feature/task-export-cli --scenario 10",
-    "scenario_07": "./scripts/generate-blind-repo.sh --output ../meridian-blind --scenario 07"
+    "full_mirror": "./scripts/generate-blind-repo.sh --output ../meridian-blind --all-branches",
+    "push": "git -C ../meridian-blind push -u origin --all",
+    "scenario_01": "./scripts/generate-blind-repo.sh --output ../meridian-blind --branch scenario/01-jwt-expiry --blind-branch fix/session-timeout",
+    "scenario_03": "./scripts/generate-blind-repo.sh --output ../meridian-blind --branch scenario/03-viewer-role --blind-branch fix/viewer-permissions",
+    "scenario_10": "./scripts/generate-blind-repo.sh --output ../meridian-blind --branch scenario/10-cli-export --blind-branch feature/task-export-cli"
   }
 }

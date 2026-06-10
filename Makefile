@@ -50,11 +50,16 @@ codegen-check:
 ci: codegen-check lint api-test web-test worker-test
 
 blind-repo:
-	@test -n "$(OUT)" || (echo "Usage: make blind-repo OUT=../meridian-blind [BRANCH=main] [SCENARIO=07]" && exit 1)
-	bash scripts/generate-blind-repo.sh --output "$(OUT)" \
-		$(if $(BRANCH),--branch "$(BRANCH)",) \
-		$(if $(BLIND_BRANCH),--blind-branch "$(BLIND_BRANCH)",) \
-		$(if $(SCENARIO),--scenario "$(SCENARIO)",)
+	@test -n "$(OUT)" || (echo "Usage: make blind-repo OUT=../meridian-blind ALL_BRANCHES=1" && exit 1)
+	@if [ "$(ALL_BRANCHES)" = "1" ]; then \
+		bash scripts/generate-blind-repo.sh --output "$(OUT)" --all-branches; \
+	else \
+		bash scripts/generate-blind-repo.sh --output "$(OUT)" \
+			$(if $(BRANCH),--branch "$(BRANCH)",) \
+			$(if $(BLIND_BRANCH),--blind-branch "$(BLIND_BRANCH)",) \
+			$(if $(SCENARIO),--scenario "$(SCENARIO)",); \
+	fi
+
 
 setup-local:
 	cp -n .env.example .env 2>/dev/null || true

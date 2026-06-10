@@ -61,38 +61,50 @@ make codegen-check
 
 ## Blind agent repository (recommended)
 
-For evaluations where the agent must not discover baked-in answers, use a **separate generated repo** (`meridian-blind`). The canonical repo keeps all evaluator docs; the blind copy has no answer keys.
+Use **`meridian-blind`** as a GitHub **template repo** — a full mirror of Meridian (all branches, all `lib/` zones) with evaluator docs and spoilers removed. Keep **`meridian`** private to yourself for scoring.
+
+### Generate the full mirror
 
 ```bash
-# Full blind copy (all lib/ zones, sanitized)
-./scripts/generate-blind-repo.sh --output ../meridian-blind
-
-# Single scenario — example: JWT mismatch
-./scripts/generate-blind-repo.sh \
-  --output ../meridian-blind \
-  --branch scenario/01-jwt-expiry \
-  --blind-branch fix/session-timeout \
-  --scenario 01
-
-# Push blind repo (one-time: create empty private repo on GitHub)
-cd ../meridian-blind
-git remote add origin git@github.com:YOUR_ORG/meridian-blind.git
-git push -u origin main
+cd meridian
+./scripts/generate-blind-repo.sh --output ../meridian-blind --all-branches
 ```
 
-**Workflow:**
+This creates four branches:
 
-1. Regenerate blind repo from canonical (commands in [docs/blind-mapping.json](blind-mapping.json))
-2. Open **only** `meridian-blind` in Cursor — never the canonical repo in the same session
-3. Give the agent the prompt from `prompts/NN.md` in the blind repo
-4. Score against `docs/agent-scenarios/` in the canonical repo
+| Canonical branch | Blind branch | Use for |
+|------------------|--------------|---------|
+| `main` | `main` | Fixture scenarios 04–09, 11–12 |
+| `scenario/01-jwt-expiry` | `fix/session-timeout` | Prompt `01.md` |
+| `scenario/03-viewer-role` | `fix/viewer-permissions` | Prompt `03.md` |
+| `scenario/10-cli-export` | `feature/task-export-cli` | Prompt `10.md` |
 
-| Canonical | Blind copy |
-|-----------|------------|
-| `docs/agent-scenarios/` | removed |
-| `qa-fixtures/` | renamed to `lib/`, READMEs removed |
-| `BUG (scenario/NN)` comments | stripped |
-| `scenario/01-jwt-expiry` branch | `fix/session-timeout` |
+### Push to GitHub (one-time setup)
+
+```bash
+cd ../meridian-blind
+git remote add origin git@github.com:YOUR_ORG/meridian-blind.git   # if not set
+git push -u origin --all
+```
+
+In GitHub repo **Settings**, enable **Template repository**.
+
+### Fork-per-run workflow
+
+1. **Never** let agents edit the template — fork `meridian-blind` into a new org for each run
+2. Clone the **fork**, check out the branch for your test (e.g. `fix/session-timeout`)
+3. Give the agent one prompt from `prompts/NN.md`
+4. Score using `docs/agent-scenarios/` in canonical `meridian` (evaluator only)
+
+Regenerate and re-push the template only when you update canonical Meridian or planted bugs.
+
+| Removed from blind copy | Renamed |
+|-------------------------|---------|
+| `docs/agent-scenarios/`, `docs/qa-guide.md` | `qa-fixtures/` → `lib/` |
+| All `lib/**/README.md` | `decoy-*` → `legacy/...` |
+| `BUG (scenario/NN)` comments | `scenario/*` branches → neutral names |
+
+Branch/prompt mapping: [docs/blind-mapping.json](blind-mapping.json) (canonical only — not copied to blind repo).
 
 See [docs/qa-guide.md](qa-guide.md) for scoring methodology.
 
