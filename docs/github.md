@@ -59,10 +59,49 @@ make ci
 make codegen-check
 ```
 
-## Running agent evaluations
+## Blind agent repository (recommended)
+
+For evaluations where the agent must not discover baked-in answers, use a **separate generated repo** (`meridian-blind`). The canonical repo keeps all evaluator docs; the blind copy has no answer keys.
+
+```bash
+# Full blind copy (all lib/ zones, sanitized)
+./scripts/generate-blind-repo.sh --output ../meridian-blind
+
+# Single scenario — example: JWT mismatch
+./scripts/generate-blind-repo.sh \
+  --output ../meridian-blind \
+  --branch scenario/01-jwt-expiry \
+  --blind-branch fix/session-timeout \
+  --scenario 01
+
+# Push blind repo (one-time: create empty private repo on GitHub)
+cd ../meridian-blind
+git remote add origin git@github.com:YOUR_ORG/meridian-blind.git
+git push -u origin main
+```
+
+**Workflow:**
+
+1. Regenerate blind repo from canonical (commands in [docs/blind-mapping.json](blind-mapping.json))
+2. Open **only** `meridian-blind` in Cursor — never the canonical repo in the same session
+3. Give the agent the prompt from `prompts/NN.md` in the blind repo
+4. Score against `docs/agent-scenarios/` in the canonical repo
+
+| Canonical | Blind copy |
+|-----------|------------|
+| `docs/agent-scenarios/` | removed |
+| `qa-fixtures/` | renamed to `lib/`, READMEs removed |
+| `BUG (scenario/NN)` comments | stripped |
+| `scenario/01-jwt-expiry` branch | `fix/session-timeout` |
+
+See [docs/qa-guide.md](qa-guide.md) for scoring methodology.
+
+## Running agent evaluations (canonical repo)
+
+If you evaluate directly in the canonical repo (not recommended — agents can read answer docs):
 
 1. Check out the scenario branch (or stay on `main` for fixtures).
-2. Give the agent **only** the user prompt from the scenario doc.
+2. Give the agent **only** the user prompt from [prompts/](../prompts/) or the scenario doc.
 3. Verify with acceptance criteria (not shared with the agent).
 4. File a result with the [agent scenario issue template](../.github/ISSUE_TEMPLATE/agent-scenario.md).
 

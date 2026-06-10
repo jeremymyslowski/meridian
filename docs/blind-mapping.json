@@ -1,0 +1,91 @@
+{
+  "description": "Evaluator-only mapping between canonical meridian and blind agent repos. Do not copy to meridian-blind.",
+  "repos": {
+    "canonical": "jeremymyslowski/meridian",
+    "blind": "jeremymyslowski/meridian-blind"
+  },
+  "path_renames": {
+    "qa-fixtures": "lib",
+    "decoy-frontend": "legacy/frontend-services",
+    "decoy-legacy": "legacy/scripts",
+    "decoy-worker": "legacy/worker-prototype"
+  },
+  "branches": {
+    "01": {
+      "canonical": "scenario/01-jwt-expiry",
+      "blind": "fix/session-timeout",
+      "prompt": "prompts/01.md"
+    },
+    "02": {
+      "canonical": "main",
+      "blind": "main",
+      "prompt": "prompts/02.md",
+      "note": "Already implemented on main — use to test redundant work"
+    },
+    "03": {
+      "canonical": "scenario/03-viewer-role",
+      "blind": "fix/viewer-permissions",
+      "prompt": "prompts/03.md"
+    },
+    "04": {
+      "canonical": "main",
+      "blind": "main",
+      "prompt": "prompts/04.md",
+      "fixture_subset": "anti-patterns/duplicated_validation"
+    },
+    "05": {
+      "canonical": "main",
+      "blind": "main",
+      "prompt": "prompts/05.md",
+      "fixture_subset": "partial-implementations/webhook-retry"
+    },
+    "06": {
+      "canonical": "main",
+      "blind": "main",
+      "prompt": "prompts/06.md",
+      "fixture_subset": "naming-traps"
+    },
+    "07": {
+      "canonical": "main",
+      "blind": "main",
+      "prompt": "prompts/07.md",
+      "fixture_subset": "broken-tests/python"
+    },
+    "08": {
+      "canonical": "main",
+      "blind": "main",
+      "prompt": "prompts/08.md",
+      "fixture_subset": "large-files"
+    },
+    "09": {
+      "canonical": "main",
+      "blind": "main",
+      "prompt": "prompts/09.md",
+      "fixture_subset": "anti-patterns/magic_strings"
+    },
+    "10": {
+      "canonical": "scenario/10-cli-export",
+      "blind": "feature/task-export-cli",
+      "prompt": "prompts/10.md"
+    },
+    "11": {
+      "canonical": "main",
+      "blind": "main",
+      "prompt": "prompts/11.md",
+      "fixture_subset": "edge-cases/circular"
+    },
+    "12": {
+      "canonical": "main",
+      "blind": "main",
+      "prompt": "prompts/12.md",
+      "fixture_subset": "edge-cases/unicode_dir"
+    }
+  },
+  "generate_commands": {
+    "full": "./scripts/generate-blind-repo.sh --output ../meridian-blind",
+    "scenario_01": "./scripts/generate-blind-repo.sh --output ../meridian-blind --branch scenario/01-jwt-expiry --blind-branch fix/session-timeout --scenario 01",
+    "scenario_03": "./scripts/generate-blind-repo.sh --output ../meridian-blind --branch scenario/03-viewer-role --blind-branch fix/viewer-permissions --scenario 03",
+    "scenario_10": "./scripts/generate-blind-repo.sh --output ../meridian-blind --branch scenario/10-cli-export --blind-branch feature/task-export-cli --scenario 10",
+    "scenario_07": "./scripts/generate-blind-repo.sh --output ../meridian-blind --scenario 07"
+  }
+}
