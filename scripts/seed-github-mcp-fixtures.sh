@@ -90,34 +90,53 @@ create_labels() {
   done
 }
 
+create_pull_request_at_index() {
+  local i="$1" draft_only="$2"
+  local title head base draft body draft_flag
+  title=$(jq -r ".pull_requests[$i].title" "$MANIFEST")
+  head=$(jq -r ".pull_requests[$i].head" "$MANIFEST")
+  base=$(jq -r ".pull_requests[$i].base" "$MANIFEST")
+  draft=$(jq -r ".pull_requests[$i].draft" "$MANIFEST")
+  body=$(jq -r ".pull_requests[$i].body" "$MANIFEST")
+
+  if [[ "$draft_only" == "true" && "$draft" != "true" ]] || \
+     [[ "$draft_only" == "false" && "$draft" == "true" ]]; then
+    return 0
+  fi
+
+  if $DRY_RUN; then
+    echo "[dry-run] pr: $title ($head -> $base, draft=$draft)"
+    return 0
+  fi
+
+  if ! gh api "repos/${REPO}/git/refs/heads/${head}" >/dev/null 2>&1; then
+    echo "  missing head branch: ${head} — run bootstrap-github-mcp-branches.sh" >&2
+    exit 1
+  fi
+
+  draft_flag=""
+  [[ "$draft" == "true" ]] && draft_flag="--draft"
+
+  # shellcheck disable=SC2086
+  gh pr create -R "$REPO" --title "$title" --head "$head" --base "$base" --body "$body" $draft_flag
+  echo "  created PR: $title"
+}
+
 create_pull_requests() {
-  echo "==> Creating pull requests (order matters for numbering)"
+  echo "==> Creating open pull requests (order matters for numbering)"
   local count
   count=$(jq '.pull_requests | length' "$MANIFEST")
   for i in $(seq 0 $((count - 1))); do
-    local title head base draft body draft_flag
-    title=$(jq -r ".pull_requests[$i].title" "$MANIFEST")
-    head=$(jq -r ".pull_requests[$i].head" "$MANIFEST")
-    base=$(jq -r ".pull_requests[$i].base" "$MANIFEST")
-    draft=$(jq -r ".pull_requests[$i].draft" "$MANIFEST")
-    body=$(jq -r ".pull_requests[$i].body" "$MANIFEST")
+    create_pull_request_at_index "$i" false
+  done
+}
 
-    if $DRY_RUN; then
-      echo "[dry-run] pr: $title ($head -> $base, draft=$draft)"
-      continue
-    fi
-
-    if ! gh api "repos/${REPO}/git/refs/heads/${head}" >/dev/null 2>&1; then
-      echo "  missing head branch: ${head} — run bootstrap-github-mcp-branches.sh" >&2
-      exit 1
-    fi
-
-    draft_flag=""
-    [[ "$draft" == "true" ]] && draft_flag="--draft"
-
-    # shellcheck disable=SC2086
-    gh pr create -R "$REPO" --title "$title" --head "$head" --base "$base" --body "$body" $draft_flag
-    echo "  created PR: $title"
+create_draft_pull_requests() {
+  echo "==> Creating draft pull requests"
+  local count
+  count=$(jq '.pull_requests | length' "$MANIFEST")
+  for i in $(seq 0 $((count - 1))); do
+    create_pull_request_at_index "$i" true
   done
 }
 
@@ -173,15 +192,13 @@ push_tags() {
       continue
     fi
 
-    local sha
+    local sha tag_sha
     sha=$(gh api "repos/${REPO}/git/refs/heads/${ref}" --jq .object.sha)
-    gh api -X POST "repos/${REPO}/git/tags" \
+    tag_sha=$(gh api -X POST "repos/${REPO}/git/tags" \
       -f tag="$name" \
       -f message="$message" \
       -f object="$sha" \
-      -f type=commit >/dev/null
-    local tag_sha
-    tag_sha=$(gh api "repos/${REPO}/git/refs/tags/${name}" --jq .object.sha)
+      -f type=commit --jq .sha)
     gh api -X POST "repos/${REPO}/git/refs" \
       -f ref="refs/tags/${name}" \
       -f sha="$tag_sha" >/dev/null
@@ -206,6 +223,7 @@ run bash "${ROOT}/scripts/bootstrap-github-mcp-branches.sh" --repo "$REPO"
 create_labels
 create_pull_requests
 create_issues
+create_draft_pull_requests
 push_tags
 create_marker
 
