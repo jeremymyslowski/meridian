@@ -1,4 +1,4 @@
-.PHONY: dev down test seed migrate api-test web-test worker-test fixture-test scenario lint ci codegen-check blind-repo
+.PHONY: dev down test seed migrate api-test web-test worker-test fixture-test scenario lint ci codegen-check blind-repo seed-github
 
 dev:
 	docker compose up --build -d
@@ -48,6 +48,10 @@ codegen-check:
 	python3 scripts/check-codegen.py
 
 ci: codegen-check lint api-test web-test worker-test
+
+seed-github:
+	@test -n "$(REPO)" || (echo "Usage: make seed-github REPO=owner/repo [FORCE=1]" && exit 1)
+	bash scripts/seed-github-mcp-fixtures.sh --repo "$(REPO)" $(if $(FORCE),--force,)
 
 blind-repo:
 	@test -n "$(OUT)" || (echo "Usage: make blind-repo OUT=../meridian-blind ALL_BRANCHES=1" && exit 1)

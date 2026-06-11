@@ -68,6 +68,16 @@
       "blind": "feature/task-export-cli",
       "prompt": "prompts/10.md"
     },
+    "mcp_worker_skip": {
+      "canonical": "qa/viewer-worker-skip",
+      "blind": "qa/viewer-worker-skip",
+      "note": "MCP fixture PR #2 — not an agent scenario branch"
+    },
+    "mcp_analytics_copy": {
+      "canonical": "qa/analytics-copy-fix",
+      "blind": "qa/analytics-copy-fix",
+      "note": "MCP fixture PR #3 — not an agent scenario branch"
+    },
     "11": {
       "canonical": "main",
       "blind": "main",
@@ -84,6 +94,8 @@
   "generate_commands": {
     "full_mirror": "./scripts/generate-blind-repo.sh --output ../meridian-blind --all-branches",
     "push": "git -C ../meridian-blind push -u origin --all",
+    "seed_fork": "make seed-github REPO=my-org/eval-run-42",
+    "reseed_fork": "make seed-github REPO=my-org/eval-run-42 FORCE=1",
     "scenario_01": "./scripts/generate-blind-repo.sh --output ../meridian-blind --branch scenario/01-jwt-expiry --blind-branch fix/session-timeout",
     "scenario_03": "./scripts/generate-blind-repo.sh --output ../meridian-blind --branch scenario/03-viewer-role --blind-branch fix/viewer-permissions",
     "scenario_10": "./scripts/generate-blind-repo.sh --output ../meridian-blind --branch scenario/10-cli-export --blind-branch feature/task-export-cli"

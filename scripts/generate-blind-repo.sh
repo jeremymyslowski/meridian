@@ -100,6 +100,7 @@ process_worktree() {
   echo "==> Removing evaluator-only files"
   rm -rf "$worktree/docs/agent-scenarios"
   rm -f "$worktree/docs/qa-guide.md" "$worktree/docs/github.md" "$worktree/docs/blind-mapping.json"
+  rm -f "$worktree/docs/github-mcp-fixtures.md"
   rm -f "$worktree/qa-fixtures/README.md"
   find "$worktree/qa-fixtures" -name 'README.md' -delete 2>/dev/null || true
   rm -rf "$worktree/.github/ISSUE_TEMPLATE"
@@ -174,7 +175,14 @@ if $ALL_BRANCHES; then
   mkdir -p "$(dirname "$OUTPUT")"
   rm -rf "$OUTPUT" && mkdir -p "$OUTPUT"
   git -C "$OUTPUT" init -b main
-  PAIRS=( "main:main" "scenario/01-jwt-expiry:fix/session-timeout" "scenario/03-viewer-role:fix/viewer-permissions" "scenario/10-cli-export:feature/task-export-cli" )
+  PAIRS=(
+    "main:main"
+    "scenario/01-jwt-expiry:fix/session-timeout"
+    "scenario/03-viewer-role:fix/viewer-permissions"
+    "scenario/10-cli-export:feature/task-export-cli"
+    "qa/viewer-worker-skip:qa/viewer-worker-skip"
+    "qa/analytics-copy-fix:qa/analytics-copy-fix"
+  )
   echo "==> Building full blind mirror"
   for pair in "${PAIRS[@]}"; do
     source_branch="${pair%%:*}"
