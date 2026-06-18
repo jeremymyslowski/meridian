@@ -6,7 +6,7 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 MANIFEST="${ROOT}/fixtures/github-mcp/manifest.json"
 REPO=""
-TEMPLATE_REPO="${MCP_TEMPLATE_REPO:-jeremymyslowski/meridian-blind-public}"
+TEMPLATE_REPO="${MCP_TEMPLATE_REPO:-jeremymyslowski/meridian-blind}"
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
