@@ -29,6 +29,10 @@ command -v jq >/dev/null 2>&1 || { echo "jq is required" >&2; exit 1; }
 
 MARKER_TITLE=$(jq -r '.marker_title' "$MANIFEST")
 
+encode_head_ref() {
+  printf 'heads/%s' "${1//\//%2F}"
+}
+
 run() {
   if $DRY_RUN; then
     echo "[dry-run] $*"
@@ -109,7 +113,7 @@ create_pull_request_at_index() {
     return 0
   fi
 
-  if ! gh api "repos/${REPO}/git/refs/heads/${head}" >/dev/null 2>&1; then
+  if ! gh api "repos/${REPO}/git/ref/$(encode_head_ref "$head")" >/dev/null 2>&1; then
     echo "  missing head branch: ${head} — run bootstrap-github-mcp-branches.sh" >&2
     exit 1
   fi
@@ -193,7 +197,7 @@ push_tags() {
     fi
 
     local sha tag_sha
-    sha=$(gh api "repos/${REPO}/git/refs/heads/${ref}" --jq .object.sha)
+    sha=$(gh api "repos/${REPO}/git/ref/$(encode_head_ref "$ref")" --jq .object.sha)
     tag_sha=$(gh api -X POST "repos/${REPO}/git/tags" \
       -f tag="$name" \
       -f message="$message" \

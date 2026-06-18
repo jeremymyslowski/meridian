@@ -6,7 +6,7 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 MANIFEST="${ROOT}/fixtures/github-mcp/manifest.json"
 REPO=""
-TEMPLATE_REPO="${MCP_TEMPLATE_REPO:-jeremymyslowski/meridian-blind}"
+TEMPLATE_REPO="${MCP_TEMPLATE_REPO:-jeremymyslowski/meridian-blind-public-0618}"
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -25,13 +25,17 @@ done
 command -v gh >/dev/null 2>&1 || { echo "gh CLI is required" >&2; exit 1; }
 command -v jq >/dev/null 2>&1 || { echo "jq is required" >&2; exit 1; }
 
+encode_head_ref() {
+  printf 'heads/%s' "${1//\//%2F}"
+}
+
 branch_exists() {
-  gh api "repos/${REPO}/git/refs/heads/${1}" >/dev/null 2>&1
+  gh api "repos/${REPO}/git/ref/$(encode_head_ref "$1")" >/dev/null 2>&1
 }
 
 ref_sha() {
   local source_repo="$1" branch="$2"
-  gh api "repos/${source_repo}/git/refs/heads/${branch}" --jq .object.sha
+  gh api "repos/${source_repo}/git/ref/$(encode_head_ref "$branch")" --jq .object.sha
 }
 
 copy_branch_ref() {
